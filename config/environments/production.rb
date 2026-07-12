@@ -24,14 +24,15 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Assume all access to the app is happening through a SSL-terminating reverse proxy.
-  # config.assume_ssl = true
+  # Detrás del Cloudflare Tunnel (TLS en el edge). Mismo patrón que Nettsy:
+  # SSL forzado por defecto, con escape por env si diera redirect-loop.
+  config.force_ssl = ENV["RAILS_FORCE_SSL"] != "false"
 
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  # No forzar https en el health check (para chequeos locales http).
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
 
-  # Skip http-to-https redirect for the default health check endpoint.
-  # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
+  # Servir estáticos desde public/ si nginx/Passenger no lo hace (activable por env).
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present? || config.public_file_server.enabled
 
   # Log to STDOUT with the current request id as a default log tag.
   config.log_tags = [ :request_id ]

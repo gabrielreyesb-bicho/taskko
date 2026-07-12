@@ -1,0 +1,35 @@
+# Deploy en bichosrv — mismo patrón que kollektor.
+# cloudflared (todos.bicho66.cloud) -> localhost:3002 -> web:3000
+services:
+  db:
+    image: postgres:16
+    restart: always
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - todos_network
+
+  web:
+    build: .
+    restart: always
+    command: bash -c "rm -f tmp/pids/server.pid && ./bin/rails server -b 0.0.0.0 -p 3000"
+    env_file: .env
+    ports:
+      - "3002:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - todos_network
+
+volumes:
+  postgres_data:
+
+networks:
+  todos_network:
