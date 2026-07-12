@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Paleta Nettsy — dark only. Verde de marca (#47614b) sobre negro. */
+@theme {
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #1a1a1a;
+  --color-bg-card: #1e1e1e;
+  --color-ink: #ffffff;
+  --color-ink-muted: #a8c4b0;
+
+  --color-brand: #47614b;
+  --color-brand-hover: #5a7a5f;
+  --color-brand-accent: #688d6e;
+  --color-brand-light: #7a9b7e;
+  --color-brand-dark: #2f4233;
+
+  --color-danger: #b8454a;
+  --color-danger-text: #e8676d;
+  --color-warn: #c99d6b;
+  --color-info: #4a5d7a;
+
+  --color-line: #3a3a3a;
+}
+
+@layer base {
+  html,
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-ink);
+    min-height: 100vh;
+  }
+
+  /* El calendario nativo se ve blanco por defecto; lo forzamos a oscuro. */
+  input,
+  select,
+  textarea {
+    color-scheme: dark;
+  }
+}

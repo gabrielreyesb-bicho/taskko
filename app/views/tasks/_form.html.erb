@@ -1,0 +1,68 @@
+<%
+  input_classes = "w-full rounded-lg border border-line bg-bg-secondary px-3 py-2 text-ink placeholder:text-ink-muted/50 focus:border-brand-accent focus:outline-none focus:ring-1 focus:ring-brand-accent transition"
+  label_classes = "block text-sm font-medium text-ink-muted mb-1.5"
+%>
+
+<%= form_with model: task, class: "space-y-5" do |f| %>
+  <% if task.errors.any? %>
+    <div class="rounded-lg border border-danger/40 bg-danger/15 px-4 py-3 text-sm text-danger-text">
+      <p class="font-medium mb-1"><%= pluralize(task.errors.count, "error", plural: "errores") %> al guardar:</p>
+      <ul class="list-disc list-inside space-y-0.5">
+        <% task.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :description, "Descripción", class: label_classes %>
+    <%= f.text_field :description, class: input_classes, placeholder: "¿Qué hay que hacer?", autofocus: true %>
+  </div>
+
+  <div>
+    <%= f.label :notes, "Notas", class: label_classes %>
+    <%= f.text_area :notes, rows: 3, class: input_classes, placeholder: "Contexto adicional (opcional)" %>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+    <div>
+      <%= f.label :category, "Categoría", class: label_classes %>
+      <%= f.text_field :category, class: input_classes, placeholder: "Personal" %>
+    </div>
+    <div>
+      <%= f.label :assigned_to, "Asignado a", class: label_classes %>
+      <%= f.select :assigned_to,
+            Task.assigned_tos.keys.map { |k| [ TasksHelper::ASSIGNED_LABELS.fetch(k, k.humanize), k ] },
+            {}, class: input_classes %>
+    </div>
+    <div>
+      <%= f.label :priority, "Prioridad", class: label_classes %>
+      <%= f.select :priority,
+            Task.priorities.keys.map { |k| [ TasksHelper::PRIORITY_LABELS.fetch(k, k.humanize), k ] },
+            {}, class: input_classes %>
+    </div>
+    <div>
+      <%= f.label :status, "Estatus", class: label_classes %>
+      <%= f.select :status,
+            Task.statuses.keys.map { |k| [ TasksHelper::STATUS_LABELS.fetch(k, k.humanize), k ] },
+            {}, class: input_classes %>
+    </div>
+    <div>
+      <%= f.label :desired_completion_date, "Fecha deseada de terminación", class: label_classes %>
+      <%= f.date_field :desired_completion_date, class: input_classes %>
+    </div>
+    <div>
+      <%= f.label :reminder_at, "Fecha de recordatorio", class: label_classes %>
+      <%= f.datetime_field :reminder_at, class: input_classes %>
+      <p class="mt-1 text-xs text-ink-muted/70">TARS avisará cuando llegue esta fecha.</p>
+    </div>
+  </div>
+
+  <div class="flex items-center gap-3 pt-2">
+    <%= f.submit (task.persisted? ? "Guardar cambios" : "Crear tarea"),
+          class: "rounded-lg bg-brand hover:bg-brand-hover px-4 py-2.5 text-sm font-medium text-white cursor-pointer transition" %>
+    <%= link_to "Cancelar", (task.persisted? ? task_path(task) : tasks_path),
+          class: "text-sm text-ink-muted hover:text-ink transition" %>
+  </div>
+<% end %>

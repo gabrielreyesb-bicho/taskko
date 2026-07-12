@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+  <head>
+    <title><%= content_for(:title) || "todos" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="todos">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="bg-bg-primary text-ink antialiased min-h-screen">
+    <header class="border-b border-line bg-bg-secondary/60 backdrop-blur sticky top-0 z-10">
+      <div class="mx-auto max-w-5xl px-4 h-16 flex items-center justify-between">
+        <%= link_to root_path, class: "flex items-center gap-2 group" do %>
+          <span class="h-2.5 w-2.5 rounded-full bg-brand-accent group-hover:bg-brand-light transition"></span>
+          <span class="text-lg font-semibold tracking-tight lowercase">todos</span>
+        <% end %>
+        <%= link_to new_task_path,
+              class: "inline-flex items-center gap-1.5 rounded-lg bg-brand hover:bg-brand-hover px-3.5 py-2 text-sm font-medium text-white transition" do %>
+          <span class="text-base leading-none">+</span> Nueva tarea
+        <% end %>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-5xl px-4 py-8">
+      <% if notice %>
+        <div class="mb-5 rounded-lg border border-brand/40 bg-brand-dark/40 px-4 py-3 text-sm text-brand-light">
+          <%= notice %>
+        </div>
+      <% end %>
+      <% if alert %>
+        <div class="mb-5 rounded-lg border border-danger/40 bg-danger/15 px-4 py-3 text-sm text-danger-text">
+          <%= alert %>
+        </div>
+      <% end %>
+
+      <%= yield %>
+    </main>
+  </body>
+</html>
