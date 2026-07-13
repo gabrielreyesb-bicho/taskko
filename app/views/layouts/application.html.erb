@@ -27,10 +27,14 @@
           <span class="h-2.5 w-2.5 rounded-full bg-brand-accent group-hover:bg-brand-light transition"></span>
           <span class="text-lg font-semibold tracking-tight lowercase">todos</span>
         <% end %>
-        <%= link_to new_task_path,
-              class: "inline-flex items-center gap-1.5 rounded-lg bg-brand hover:bg-brand-hover px-3.5 py-2 text-sm font-medium text-white transition" do %>
-          <span class="text-base leading-none">+</span> Nueva tarea
-        <% end %>
+        <div class="flex items-center gap-2">
+          <%= link_to "Categorías", categories_path,
+                class: "hidden sm:inline-flex rounded-lg border border-line px-3.5 py-2 text-sm text-ink-muted hover:text-ink hover:border-brand-accent/60 transition" %>
+          <%= link_to new_task_path,
+                class: "inline-flex items-center gap-1.5 rounded-lg bg-brand hover:bg-brand-hover px-3.5 py-2 text-sm font-medium text-white transition" do %>
+            <span class="text-base leading-none">+</span> Nueva tarea
+          <% end %>
+        </div>
       </div>
     </header>
 

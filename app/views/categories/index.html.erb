@@ -1,0 +1,42 @@
+<% content_for :title, "Categorías · todos" %>
+
+<div class="flex items-end justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Categorías</h1>
+    <p class="text-sm text-ink-muted mt-1"><%= pluralize(@categories.size, "categoría", plural: "categorías") %></p>
+  </div>
+  <%= link_to "Ver tareas", tasks_path, class: "rounded-lg border border-line px-3.5 py-2 text-sm text-ink-muted hover:text-ink hover:border-brand-accent/60 transition" %>
+</div>
+
+<section class="rounded-xl border border-line bg-bg-card p-6 mb-6">
+  <h2 class="text-base font-medium mb-4">Nueva categoría</h2>
+  <%= render "form", category: @category %>
+</section>
+
+<div class="space-y-3">
+  <% @categories.each do |category| %>
+    <% task_count = @task_counts.fetch(category.id, 0) %>
+    <article class="rounded-xl border border-line bg-bg-card px-5 py-4">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="font-medium"><%= category.name %></h2>
+          <p class="text-sm text-ink-muted"><%= pluralize(task_count, "tarea", plural: "tareas") %></p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <%= link_to "Ver tareas", tasks_path(category_id: category.id),
+                class: "rounded-md border border-line px-2.5 py-1 text-xs text-ink-muted hover:text-brand-light hover:border-brand-accent/60 transition" %>
+          <%= link_to "Editar", edit_category_path(category),
+                class: "rounded-md border border-line px-2.5 py-1 text-xs text-ink-muted hover:text-ink hover:border-brand-accent/60 transition" %>
+          <% if task_count.zero? %>
+            <%= button_to "Eliminar", category_path(category), method: :delete,
+                  form: { data: { turbo_confirm: "¿Eliminar esta categoría?" } },
+                  class: "rounded-md border border-line px-2.5 py-1 text-xs text-ink-muted hover:text-danger-text hover:border-danger/50 transition" %>
+          <% else %>
+            <span class="rounded-md border border-line px-2.5 py-1 text-xs text-ink-muted/70">En uso</span>
+          <% end %>
+        </div>
+      </div>
+    </article>
+  <% end %>
+</div>

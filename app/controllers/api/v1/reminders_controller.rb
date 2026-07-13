@@ -1,11 +1,11 @@
 module Api
   module V1
     # Endpoint que hace proactiva a la app: TARS lo consulta periódicamente,
-    # envía los avisos (Telegram / WhatsApp) y luego marca cada tarea como
-    # notificada con POST /api/v1/tasks/:id/notified.
+    # envía los avisos (Telegram / WhatsApp) y luego marca cuándo avisó por
+    # última vez con POST /api/v1/tasks/:id/notified.
     class RemindersController < Api::BaseController
       # GET /api/v1/reminders/due
-      # Tareas con reminder_at <= now y sin notificar todavía.
+      # Tareas abiertas vencidas que no se han notificado hoy.
       def due
         tasks = Task.due_reminders
         render json: {

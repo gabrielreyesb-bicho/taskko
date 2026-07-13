@@ -1,10 +1,14 @@
 # Datos de ejemplo para desarrollo. Idempotente: no duplica.
+categories = %w[Personal Casa DiveOps TARS].index_with do |name|
+  Category.find_or_create_by_name!(name)
+end
+
 if Task.count.zero?
   Task.create!([
     {
-      description: "Comprar tanque de buceo nuevo",
+      name: "Comprar tanque de buceo nuevo",
       notes: "El de aluminio ya tiene demasiadas horas. Revisar opciones de acero.",
-      category: "DiveOps",
+      category: categories.fetch("DiveOps"),
       assigned_to: :gabriel,
       priority: :media,
       status: :abierta,
@@ -12,9 +16,9 @@ if Task.count.zero?
       reminder_at: 2.days.from_now
     },
     {
-      description: "Pagar predial de la casa",
+      name: "Pagar predial de la casa",
       notes: "Antes de que venza el descuento.",
-      category: "Casa",
+      category: categories.fetch("Casa"),
       assigned_to: :gabriel,
       priority: :alta,
       status: :en_proceso,
@@ -22,16 +26,16 @@ if Task.count.zero?
       reminder_at: 1.hour.ago # vencido → aparece en /api/v1/reminders/due
     },
     {
-      description: "Agendar cita con el dentista",
-      category: "Personal",
+      name: "Agendar cita con el dentista",
+      category: categories.fetch("Personal"),
       assigned_to: :lucy,
       priority: :baja,
       status: :abierta,
       reminder_at: 5.days.from_now
     },
     {
-      description: "Renovar dominio de Kollektor",
-      category: "Personal",
+      name: "Renovar dominio de Kollektor",
+      category: categories.fetch("Personal"),
       assigned_to: :gabriel,
       priority: :media,
       status: :cerrada

@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Interfaz web (CRUD de tareas).
+  resources :categories, except: %i[show]
+
+  # Interfaz web (CRUD de tareas).
   resources :tasks do
     member do
       # Cambio rápido de estatus desde la lista.

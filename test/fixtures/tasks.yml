@@ -1,9 +1,9 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  description: MyString
+  name: MyString
   notes: MyText
-  category: MyString
+  category: personal
   assigned_to: 1
   priority: 1
   status: 1
@@ -13,9 +13,9 @@ one:
   notified_at: 2026-07-12 10:52:09
 
 two:
-  description: MyString
+  name: MyString
   notes: MyText
-  category: MyString
+  category: casa
   assigned_to: 1
   priority: 1
   status: 1

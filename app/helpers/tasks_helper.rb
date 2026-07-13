@@ -53,8 +53,8 @@ module TasksHelper
     l(value, format: :long)
   end
 
-  # true si el recordatorio ya venció y sigue pendiente de notificar.
+  # true si la tarea abierta ya venció, aunque TARS ya haya insistido hoy.
   def reminder_overdue?(task)
-    task.reminder_at.present? && task.reminder_at <= Time.current && task.notified_at.nil?
+    task.overdue?
   end
 end

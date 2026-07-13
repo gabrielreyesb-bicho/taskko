@@ -1,4 +1,17 @@
 es:
+  activerecord:
+    attributes:
+      task:
+        name: "Nombre"
+        category: "Categoría"
+        category_id: "Categoría"
+      category:
+        name: "Nombre"
+    models:
+      category: "Categoría"
+    errors:
+      messages:
+        blank: "no puede estar en blanco"
   date:
     formats:
       default: "%d/%m/%Y"

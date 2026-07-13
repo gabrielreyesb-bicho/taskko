@@ -1,13 +1,16 @@
 class TasksController < ApplicationController
   before_action :set_task, only: %i[show edit update destroy update_status]
+  before_action :set_categories, only: %i[index new edit create update]
 
   def index
     @status_filter = params[:status].presence
+    @category_filter = params[:category_id].presence
     @tasks = Task.all
     @tasks = @tasks.where(status: @status_filter) if @status_filter && Task.statuses.key?(@status_filter)
+    @tasks = @tasks.where(category_id: @category_filter) if @category_filter.present?
 
     # Activas primero, luego por prioridad (alta arriba) y recordatorio más próximo.
-    @tasks = @tasks.order(
+    @tasks = @tasks.includes(:category).order(
       Arel.sql("CASE WHEN status IN (2, 3) THEN 1 ELSE 0 END"),
       priority: :desc,
       reminder_at: :asc,
@@ -19,7 +22,7 @@ class TasksController < ApplicationController
   end
 
   def new
-    @task = Task.new
+    @task = Task.new(category: default_category)
   end
 
   def edit
@@ -64,8 +67,16 @@ class TasksController < ApplicationController
 
   def task_params
     params.require(:task).permit(
-      :description, :notes, :category, :assigned_to, :priority, :status,
+      :name, :notes, :category_id, :assigned_to, :priority, :status,
       :desired_completion_date, :reminder_at
     )
+  end
+
+  def set_categories
+    @categories = Category.ordered
+  end
+
+  def default_category
+    Category.find_by("lower(name) = ?", "personal") || Category.ordered.first
   end
 end
