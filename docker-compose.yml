@@ -1,5 +1,5 @@
 # Deploy en bichosrv — mismo patrón que kollektor.
-# cloudflared (todos.bicho66.cloud) -> localhost:3002 -> web:3000
+# cloudflared (taskko.bicho66.cloud) -> localhost:3002 -> web:3000
 services:
   db:
     image: postgres:16
@@ -13,7 +13,7 @@ services:
       timeout: 3s
       retries: 10
     networks:
-      - todos_network
+      - taskko_network
 
   web:
     build: .
@@ -26,10 +26,10 @@ services:
       db:
         condition: service_healthy
     networks:
-      - todos_network
+      - taskko_network
 
 volumes:
   postgres_data:
 
 networks:
-  todos_network:
+  taskko_network:

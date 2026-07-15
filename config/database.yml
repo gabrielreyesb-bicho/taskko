@@ -14,16 +14,16 @@ default: &default
 
 development:
   <<: *default
-  database: todos_development
+  database: taskko_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: todos_test
+  database: taskko_test
 
 # En producción (bichosrv) las credenciales llegan por variables de entorno.
 production:
   <<: *default
-  database: <%= ENV.fetch("DB_NAME", "todos_production") %>
+  database: <%= ENV.fetch("DB_NAME", "taskko_production") %>

@@ -1,10 +1,10 @@
 #!/bin/bash
-# Deploy de todos en bichosrv (Docker, mismo patrón que kollektor).
-# Uso: cd ~/todos && ./deploy.sh
+# Deploy de Taskko en bichosrv (Docker, mismo patrón que kollektor).
+# Uso: cd ~/taskko && ./deploy.sh
 set -e
 
 echo "=== Pulling latest code ==="
-cd ~/todos
+cd ~/taskko
 git pull origin main
 
 echo "=== Rebuilding containers ==="
