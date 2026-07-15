@@ -1,7 +1,6 @@
 module TasksHelper
   STATUS_LABELS = {
     "abierta" => "Abierta",
-    "en_proceso" => "En proceso",
     "cerrada" => "Cerrada",
     "cancelada" => "Cancelada"
   }.freeze
@@ -24,10 +23,9 @@ module TasksHelper
   # Clases Tailwind (paleta Nettsy) para el badge de estatus.
   def status_badge_classes(task)
     case task.status
-    when "abierta"    then "bg-brand-dark text-brand-light"
-    when "en_proceso" then "bg-info/25 text-blue-200"
-    when "cerrada"    then "bg-line text-ink-muted"
-    when "cancelada"  then "bg-danger/20 text-danger-text"
+    when "abierta"   then "bg-brand-dark text-brand-light"
+    when "cerrada"   then "bg-line text-ink-muted"
+    when "cancelada" then "bg-danger/20 text-danger-text"
     else "bg-line text-ink-muted"
     end
   end
@@ -51,10 +49,5 @@ module TasksHelper
   def date_or_dash(value)
     return "—" if value.blank?
     l(value, format: :long)
-  end
-
-  # true si la tarea abierta ya venció, aunque TARS ya haya insistido hoy.
-  def reminder_overdue?(task)
-    task.overdue?
   end
 end

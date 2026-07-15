@@ -28,16 +28,21 @@
       <dt class="text-ink-muted">Asignado a</dt>
       <dd class="mt-0.5"><%= assigned_label(@task) %></dd>
     </div>
+    <%# Igual que en la lista: el rojo lo pinta la fecha que manda. %>
+    <% alerta_vencida = @task.overdue? && @task.desired_completion_date.blank? %>
     <div>
       <dt class="text-ink-muted">Fecha de recordatorio</dt>
-      <dd class="mt-0.5 <%= 'text-danger-text font-medium' if reminder_overdue?(@task) %>">
+      <dd class="mt-0.5 <%= 'text-danger-text font-medium' if alerta_vencida %>">
         <%= datetime_or_dash(@task.reminder_at) %>
-        <% if reminder_overdue?(@task) %> · vencido<% end %>
+        <% if alerta_vencida %> · vencida<% end %>
       </dd>
     </div>
     <div>
       <dt class="text-ink-muted">Fecha deseada de terminación</dt>
-      <dd class="mt-0.5"><%= date_or_dash(@task.desired_completion_date) %></dd>
+      <dd class="mt-0.5 <%= 'text-danger-text font-medium' if @task.overdue? %>">
+        <%= date_or_dash(@task.desired_completion_date) %>
+        <% if @task.overdue? %> · vencida<% end %>
+      </dd>
     </div>
     <div>
       <dt class="text-ink-muted">Notificado a TARS</dt>

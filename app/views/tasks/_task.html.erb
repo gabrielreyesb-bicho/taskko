@@ -18,18 +18,24 @@
     </div>
 
     <div class="flex flex-col items-end gap-2 shrink-0 text-right">
+      <%# El rojo lo pinta la fecha que manda: la meta si la hay, la alerta si no.
+          Así la tarjeta y la vista "Vencidas" dicen siempre lo mismo. %>
       <% if task.reminder_at.present? %>
-        <div class="text-xs <%= reminder_overdue?(task) ? 'text-danger-text font-medium' : 'text-ink-muted' %>">
+        <% alerta_vencida = task.overdue? && task.desired_completion_date.blank? %>
+        <div class="text-xs <%= alerta_vencida ? 'text-danger-text font-medium' : 'text-ink-muted' %>">
           <span class="opacity-70">🔔</span> <%= datetime_or_dash(task.reminder_at) %>
-          <% if reminder_overdue?(task) %><span class="ml-1">vencido</span><% end %>
+          <% if alerta_vencida %><span class="ml-1">vencida</span><% end %>
         </div>
       <% end %>
       <% if task.desired_completion_date.present? %>
-        <div class="text-xs text-ink-muted">Meta: <%= date_or_dash(task.desired_completion_date) %></div>
+        <div class="text-xs <%= task.overdue? ? 'text-danger-text font-medium' : 'text-ink-muted' %>">
+          Meta: <%= date_or_dash(task.desired_completion_date) %>
+          <% if task.overdue? %><span class="ml-1">vencida</span><% end %>
+        </div>
       <% end %>
 
       <div class="flex items-center gap-1 mt-1">
-        <% if task.status_abierta? || task.status_en_proceso? %>
+        <% if task.status_abierta? %>
           <%= button_to "Cerrar", status_task_path(task, value: "cerrada"), method: :patch,
                 class: "rounded-md border border-line px-2.5 py-1 text-xs text-ink-muted hover:text-brand-light hover:border-brand-accent/60 transition" %>
         <% end %>

@@ -67,7 +67,9 @@ class TaskTest < ActiveSupport::TestCase
       )
 
       assert_includes Task.due_reminders, task
-      assert task.overdue?
+      assert task.alert_fired?
+      # Vence hoy, así que todavía no está vencida: TARS insiste, la lista no la pinta de rojo.
+      assert_not task.overdue?
     end
   end
 
@@ -83,5 +85,71 @@ class TaskTest < ActiveSupport::TestCase
       assert_not_includes Task.due_reminders, task
       assert_not task.overdue?
     end
+  end
+
+  # --- Vistas por fecha (Hoy / Vencidas) ---
+  #
+  # La regla: manda la meta. La alerta solo decide cuando no hay meta.
+
+  test "la meta de hoy cae en Hoy" do
+    task = crear(desired_completion_date: Date.current)
+
+    assert_includes Task.due_today, task
+    assert_not_includes Task.overdue_tasks, task
+  end
+
+  test "la meta pasada cae en Vencidas" do
+    task = crear(desired_completion_date: Date.current - 1)
+
+    assert_includes Task.overdue_tasks, task
+    assert_not_includes Task.due_today, task
+  end
+
+  # El caso que importa: TARS empuja antes de tiempo, y eso no vence nada.
+  test "una alerta que ya sono no vence una tarea cuya meta sigue en el futuro" do
+    task = crear(desired_completion_date: Date.current + 1, reminder_at: 1.day.ago)
+
+    assert_not_includes Task.overdue_tasks, task
+    assert_not_includes Task.due_today, task
+  end
+
+  test "sin meta manda la alerta" do
+    de_hoy = crear(reminder_at: Time.current.change(hour: 7))
+    de_ayer = crear(reminder_at: 1.day.ago)
+    de_manana = crear(reminder_at: 1.day.from_now)
+
+    assert_includes Task.due_today, de_hoy
+    assert_includes Task.overdue_tasks, de_ayer
+    assert_not_includes Task.due_today, de_manana
+    assert_not_includes Task.overdue_tasks, de_manana
+  end
+
+  test "una tarea sin fechas no aparece en ninguna vista" do
+    task = crear
+
+    assert_not_includes Task.due_today, task
+    assert_not_includes Task.overdue_tasks, task
+  end
+
+  test "las vistas por fecha ignoran las tareas cerradas" do
+    task = crear(desired_completion_date: Date.current - 1, status: :cerrada)
+
+    assert_not_includes Task.overdue_tasks, task
+    assert_not_includes Task.due_today, task
+  end
+
+  test "Hoy y Vencidas nunca comparten una tarea" do
+    crear(desired_completion_date: Date.current)
+    crear(desired_completion_date: Date.current - 1)
+    crear(reminder_at: 1.day.ago)
+    crear(desired_completion_date: Date.current + 1, reminder_at: 1.day.ago)
+
+    assert_empty Task.due_today.ids & Task.overdue_tasks.ids
+  end
+
+  private
+
+  def crear(**attrs)
+    Task.create!(name: "Tarea de prueba", category: categories(:personal), **attrs)
   end
 end

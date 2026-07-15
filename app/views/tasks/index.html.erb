@@ -10,14 +10,15 @@
 <%# Filtros por estatus %>
 <div class="flex flex-wrap gap-2 mb-6">
   <% filter_chip = ->(label, value) do %>
-    <% active = @status_filter == value || (value.nil? && @status_filter.nil?) %>
+    <% active = @status_param == value %>
     <% path_params = { status: value, category_id: @category_filter }.compact_blank %>
     <%= link_to label, tasks_path(path_params),
           class: "rounded-full px-3.5 py-1.5 text-sm border transition #{active ? 'border-brand-accent bg-brand-dark text-brand-light' : 'border-line text-ink-muted hover:border-brand-accent/60 hover:text-ink'}" %>
   <% end %>
-  <%= filter_chip.call("Todas", nil) %>
+  <%= filter_chip.call("Todas", @all_statuses) %>
   <%= filter_chip.call("Abiertas", "abierta") %>
-  <%= filter_chip.call("En proceso", "en_proceso") %>
+  <%= filter_chip.call("Hoy", "hoy") %>
+  <%= filter_chip.call("Vencidas", "vencidas") %>
   <%= filter_chip.call("Cerradas", "cerrada") %>
   <%= filter_chip.call("Canceladas", "cancelada") %>
 </div>
@@ -26,7 +27,7 @@
 <div class="flex flex-wrap gap-2 mb-6">
   <% category_chip = ->(label, value) do %>
     <% active = @category_filter == value || (value.nil? && @category_filter.nil?) %>
-    <% path_params = { status: @status_filter, category_id: value }.compact_blank %>
+    <% path_params = { status: @status_param, category_id: value }.compact_blank %>
     <%= link_to label, tasks_path(path_params),
           class: "rounded-full px-3.5 py-1.5 text-sm border transition #{active ? 'border-brand-accent bg-brand-dark text-brand-light' : 'border-line text-ink-muted hover:border-brand-accent/60 hover:text-ink'}" %>
   <% end %>

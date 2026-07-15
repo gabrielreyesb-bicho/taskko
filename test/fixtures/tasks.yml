@@ -1,25 +1,17 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Una abierta y una cerrada: lo mínimo para probar los filtros de la lista.
+# Sin reminder_at a propósito, para no entrar en Task.due_reminders.
 
-one:
-  name: MyString
-  notes: MyText
+abierta:
+  name: Tarea de prueba abierta
   category: personal
-  assigned_to: 1
-  priority: 1
-  status: 1
-  desired_completion_date: 2026-07-12
-  reminder_at: 2026-07-12 10:52:09
-  closed_at: 2026-07-12 10:52:09
-  notified_at: 2026-07-12 10:52:09
+  assigned_to: gabriel
+  priority: media
+  status: abierta
 
-two:
-  name: MyString
-  notes: MyText
+cerrada:
+  name: Tarea de prueba cerrada
   category: casa
-  assigned_to: 1
-  priority: 1
-  status: 1
-  desired_completion_date: 2026-07-12
-  reminder_at: 2026-07-12 10:52:09
+  assigned_to: gabriel
+  priority: media
+  status: cerrada
   closed_at: 2026-07-12 10:52:09
-  notified_at: 2026-07-12 10:52:09

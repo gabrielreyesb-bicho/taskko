@@ -1,12 +1,21 @@
 class TasksController < ApplicationController
+  # La lista arranca en "Abiertas": es la vista de trabajo del día a día.
+  DEFAULT_STATUS = "abierta".freeze
+  # Una URL sin :status ya significa "abiertas", así que ver todas las tareas
+  # requiere pedirlo de forma explícita.
+  ALL_STATUSES = "todas".freeze
+  # "Hoy" y "Vencidas" no son estatus sino vistas por fecha: viajan en el mismo
+  # parámetro porque son excluyentes entre sí y con los estatus.
+  DATE_VIEWS = { "hoy" => :due_today, "vencidas" => :overdue_tasks }.freeze
+
   before_action :set_task, only: %i[show edit update destroy update_status]
   before_action :set_categories, only: %i[index new edit create update]
 
   def index
-    @status_filter = params[:status].presence
+    @all_statuses = ALL_STATUSES
+    @status_param = normalized_status(params[:status])
     @category_filter = params[:category_id].presence
-    @tasks = Task.all
-    @tasks = @tasks.where(status: @status_filter) if @status_filter && Task.statuses.key?(@status_filter)
+    @tasks = scope_for(@status_param)
     @tasks = @tasks.where(category_id: @category_filter) if @category_filter.present?
 
     # Activas primero, luego por prioridad (alta arriba) y recordatorio más próximo.
@@ -60,6 +69,23 @@ class TasksController < ApplicationController
   end
 
   private
+
+  # Un valor desconocido (una URL vieja con ?status=en_proceso, por ejemplo)
+  # cae al default en vez de mostrar todo, que sería justo lo contrario.
+  def normalized_status(value)
+    value = value.presence
+    return DEFAULT_STATUS if value.nil?
+    return value if value == ALL_STATUSES || DATE_VIEWS.key?(value) || Task.statuses.key?(value)
+
+    DEFAULT_STATUS
+  end
+
+  def scope_for(value)
+    return Task.all if value == ALL_STATUSES
+    return Task.public_send(DATE_VIEWS.fetch(value)) if DATE_VIEWS.key?(value)
+
+    Task.where(status: value)
+  end
 
   def set_task
     @task = Task.find(params[:id])
