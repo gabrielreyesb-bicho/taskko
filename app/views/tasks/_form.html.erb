@@ -64,7 +64,7 @@
   <div class="flex items-center gap-3 pt-2">
     <%= f.submit (task.persisted? ? "Guardar cambios" : "Crear tarea"),
           class: "rounded-lg bg-brand hover:bg-brand-hover px-4 py-2.5 text-sm font-medium text-white cursor-pointer transition" %>
-    <%= link_to "Cancelar", (task.persisted? ? task_path(task) : tasks_path),
+    <%= link_to "Cancelar", (task.persisted? ? task_path(task) : last_list_path),
           class: "text-sm text-ink-muted hover:text-ink transition" %>
   </div>
 <% end %>

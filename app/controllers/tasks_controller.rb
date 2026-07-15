@@ -10,8 +10,13 @@ class TasksController < ApplicationController
 
   before_action :set_task, only: %i[show edit update destroy update_status]
   before_action :set_categories, only: %i[index new edit create update]
+  helper_method :last_list_path
 
   def index
+    # Se recuerda la vista exacta, con sus filtros, para volver a ella después
+    # de crear, editar, cerrar o eliminar.
+    session[:last_tasks_list] = request.fullpath
+
     @all_statuses = ALL_STATUSES
     @status_param = normalized_status(params[:status])
     @category_filter = params[:category_id].presence
@@ -40,7 +45,7 @@ class TasksController < ApplicationController
   def create
     @task = Task.new(task_params)
     if @task.save
-      redirect_to tasks_path, notice: "Tarea creada."
+      redirect_to last_list_path, notice: "Tarea creada."
     else
       render :new, status: :unprocessable_entity
     end
@@ -48,7 +53,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to tasks_path, notice: "Tarea actualizada."
+      redirect_to last_list_path, notice: "Tarea actualizada."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -56,19 +61,25 @@ class TasksController < ApplicationController
 
   def destroy
     @task.destroy
-    redirect_to tasks_path, notice: "Tarea eliminada.", status: :see_other
+    redirect_to last_list_path, notice: "Tarea eliminada.", status: :see_other
   end
 
   # Cambio rápido de estatus desde la lista.
   def update_status
     if Task.statuses.key?(params[:value]) && @task.update(status: params[:value])
-      redirect_to tasks_path, notice: "Estatus actualizado."
+      redirect_to last_list_path, notice: "Estatus actualizado."
     else
-      redirect_to tasks_path, alert: "No se pudo actualizar el estatus."
+      redirect_to last_list_path, alert: "No se pudo actualizar el estatus."
     end
   end
 
   private
+
+  # La última lista que se vio, con sus filtros. Solo se escribe en #index, así
+  # que siempre es una ruta propia y nunca llega de fuera.
+  def last_list_path
+    session[:last_tasks_list].presence || tasks_path
+  end
 
   # Un valor desconocido (una URL vieja con ?status=en_proceso, por ejemplo)
   # cae al default en vez de mostrar todo, que sería justo lo contrario.

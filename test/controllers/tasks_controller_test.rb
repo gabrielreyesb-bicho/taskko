@@ -1,6 +1,8 @@
 require "test_helper"
 
 class TasksControllerTest < ActionDispatch::IntegrationTest
+  ALL = TasksController::ALL_STATUSES
+
   test "la lista arranca mostrando solo las abiertas" do
     get tasks_path
 
@@ -77,6 +79,53 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match de_casa.name, response.body
     assert_no_match(/#{personal.name}/, response.body)
+  end
+
+  # --- Volver a la lista que estabas viendo ---
+  #
+  # Cerrar, crear, editar o eliminar no debe devolverte a "Abiertas / Todas las
+  # categorías": pierdes el filtro en el que estabas trabajando.
+
+  test "cerrar una tarea regresa a la lista con sus filtros" do
+    lista = tasks_path(status: ALL, category_id: categories(:casa).id)
+    get lista
+
+    patch status_task_path(tasks(:abierta), value: "cerrada")
+
+    assert_redirected_to lista
+  end
+
+  test "crear una tarea regresa a la lista con sus filtros" do
+    lista = tasks_path(status: "hoy", category_id: categories(:casa).id)
+    get lista
+
+    post tasks_path, params: { task: { name: "Recién creada", category_id: categories(:casa).id } }
+
+    assert_redirected_to lista
+  end
+
+  test "editar una tarea regresa a la lista con sus filtros" do
+    lista = tasks_path(status: "vencidas")
+    get lista
+
+    patch task_path(tasks(:abierta)), params: { task: { name: "Renombrada" } }
+
+    assert_redirected_to lista
+  end
+
+  test "eliminar una tarea regresa a la lista con sus filtros" do
+    lista = tasks_path(status: ALL)
+    get lista
+
+    delete task_path(tasks(:abierta))
+
+    assert_redirected_to lista
+  end
+
+  test "sin lista previa se cae a la lista por defecto" do
+    patch status_task_path(tasks(:abierta), value: "cerrada")
+
+    assert_redirected_to tasks_path
   end
 
   # Las vistas de detalle y formulario no tenían cobertura: un helper borrado
