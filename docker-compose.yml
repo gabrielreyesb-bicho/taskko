@@ -1,5 +1,10 @@
 # Deploy en bichosrv — mismo patrón que kollektor.
 # cloudflared (taskko.bicho66.cloud) -> localhost:3002 -> web:3000
+
+# Fijo el nombre del proyecto: sin esto Compose lo deriva de la carpeta,
+# y renombrarla apuntaría a un volumen distinto (base vacía).
+name: taskko
+
 services:
   db:
     image: postgres:16
